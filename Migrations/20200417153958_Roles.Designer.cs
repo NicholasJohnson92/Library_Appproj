@@ -20,7 +20,7 @@ namespace Library_App.Migrations
                 .HasAnnotation("ProductVersion", "3.1.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-            modelBuilder.
+            
 
             modelBuilder.Entity("Library_App.Models.Author", b =>
                 {

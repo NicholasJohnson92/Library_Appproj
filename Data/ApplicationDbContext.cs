@@ -15,17 +15,16 @@ namespace Library_App.Data
         {
 
         }
-        protected override void OnModelCreating(ModelBuilder builder) 
-        { base.OnModelCreating(builder);
-            builder.Entity<IdentityRole>()
-                .HasData(new IdentityRole{ Name = "Reader",NormalizedName = "READER"}); }
-        public  DbSet<Reader> Readers { get; set; }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder); builder.Entity<IdentityRole>()
+                .HasData(new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" });
+        }
+
+        public DbSet<Reader> Readers { get; set; }
         public DbSet<Shelf> Shelves { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Books> Books { get; set; }
-        
-
-
 
     }
 }
