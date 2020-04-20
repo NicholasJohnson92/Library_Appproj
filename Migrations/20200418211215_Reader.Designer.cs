@@ -4,14 +4,16 @@ using Library_App.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Library_App.Data.Migrations
+namespace Library_App.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200418211215_Reader")]
+    partial class Reader
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,9 +73,6 @@ namespace Library_App.Data.Migrations
                     b.Property<int?>("LibraryId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ReaderId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Shelf_ID")
                         .HasColumnType("int");
 
@@ -85,8 +84,6 @@ namespace Library_App.Data.Migrations
                     b.HasIndex("AuthorID");
 
                     b.HasIndex("LibraryId");
-
-                    b.HasIndex("ReaderId");
 
                     b.ToTable("Books");
                 });
@@ -183,8 +180,8 @@ namespace Library_App.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "968fb88d-8b67-4040-8cf1-b328b96f1fd0",
-                            ConcurrencyStamp = "347195ff-96e6-451f-aeb0-900581dbb164",
+                            Id = "8149292e-d030-4247-bbd2-f734dcd45ed0",
+                            ConcurrencyStamp = "d6b98485-168c-4764-ae2e-d4adeb1ee640",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -370,12 +367,6 @@ namespace Library_App.Data.Migrations
                     b.HasOne("Library_App.Models.Library", "Library")
                         .WithMany()
                         .HasForeignKey("LibraryId");
-
-                    b.HasOne("Library_App.Models.Reader", "Reader")
-                        .WithMany()
-                        .HasForeignKey("ReaderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Library_App.Models.Library", b =>

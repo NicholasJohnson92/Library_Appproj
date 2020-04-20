@@ -23,6 +23,8 @@ namespace Library_App.Models
         [ForeignKey("Author")]
         public int AuthorID { get; set; }
         public Author Author { get; set; }
-
+        [ForeignKey("Reader")]
+        public int ReaderId { get; set; }
+        public Reader Reader { get; set; }
     }
 }

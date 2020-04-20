@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Library_App.Data;
 using Library_App.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Library_App.Controllers
 {
@@ -24,7 +25,11 @@ namespace Library_App.Controllers
         // GET: Readers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Readers.ToListAsync());
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Reader reader =await _context.Readers.Where(s => s.IdentityUserId == userId).FirstOrDefaultAsync();
+            GetShelves(reader.ReaderId);
+            return View(reader);
+            
         }
 
         // GET: Readers/Details/5
@@ -35,14 +40,13 @@ namespace Library_App.Controllers
                 return NotFound();
             }
 
-            var reader = await _context.Readers
-                .FirstOrDefaultAsync(m => m.ReaderId == id);
-            if (reader == null)
+            var books =await _context.Books.Where(s => s.Shelf_ID == id).ToListAsync();
+            if (books== null)
             {
                 return NotFound();
             }
 
-            return View(reader);
+            return View(books);
         }
 
         // GET: Readers/Create
@@ -60,6 +64,8 @@ namespace Library_App.Controllers
         {
             if (ModelState.IsValid)
             {
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                reader.IdentityUserId = userId;
                 _context.Add(reader);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -151,13 +157,26 @@ namespace Library_App.Controllers
         {
             return _context.Readers.Any(e => e.ReaderId == id);
         }
-        public async void AddBook(Books books)
+        [HttpGet]
+        public IActionResult AddBook(int id) 
         {
+            return View();
+        
+        
+        
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddBook(Books books)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Reader reader =await _context.Readers.Where(s => s.IdentityUserId == userId).FirstOrDefaultAsync();
             var author = await findAuthor(books.AuthorFirstName, books.AuthorLastName);
-
+            books.Genre = books.Genre.ToLower();
             books.AuthorID = getAuthorID(author);
+            books.ReaderId = reader.ReaderId;
             _context.Add(books);
             _context.SaveChanges();
+            return View(books);
         }
         public async Task<Author> findAuthor(string firstName, string lastName)
         {
@@ -187,15 +206,34 @@ namespace Library_App.Controllers
 
 
         }
+        public async Task<IActionResult> editBook(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Books books = await _context.Books.FindAsync(id);
+            if (books == null)
+            {
+                return NotFound();
+            }
+            return View(books);
+        }
+
+        [HttpPost]
         public async Task<IActionResult> editBook(Books books) 
         {
             var author = await findAuthor(books.AuthorFirstName, books.AuthorLastName);
-
+            Books books1 = await _context.Books.Where(s => s.BookId == books.BookId).FirstOrDefaultAsync();
             books.AuthorID = getAuthorID(author);
-            _context.Update(books);
+            books1 = books;
+            _context.Update(books1);
             _context.SaveChanges();
-            return View(books);
+            return View(books1);
         }
+
+        [HttpPost,ActionName("DeleteBook")]
         public async Task<IActionResult> DeleteBook(Books books) 
         {
             var deletedbook = await _context.Books.Where(s => s.BookId == books.BookId).FirstOrDefaultAsync();
@@ -210,23 +248,113 @@ namespace Library_App.Controllers
         }
         public async Task<List<Books>> GetAllBooks(Reader reader) 
         {
-            var checkShelves = await  _context.Shelves.Where(s => s.ReaderId == reader.ReaderId).ToListAsync();
+            
             List<Books> allBooks = new List<Books>();
-            foreach(var shelf in checkShelves) 
-            {
-               allBooks = await _context.Books.Where(s => s.Shelf_ID == shelf.Shelf_ID).ToListAsync();
-                /*  var books foreach(var book in books) 
-                  {
-                      allBooks.Add(book);
-                  }*/
-            }
+            allBooks = await _context.Books.Where(s => s.ReaderId == reader.ReaderId).ToListAsync();
             return allBooks;
         }
 
 
+        public async Task<List<Books>> GetBooksByGenre(string genre)
+        { genre = genre.ToLower();
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Reader reader = await _context.Readers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+            var myShelves = await _context.Shelves.Where(s => s.ReaderId == reader.ReaderId).ToListAsync();
+            List<Books> booksByGenre = new List<Books>();
+            foreach(var shelf in myShelves) 
+            {
+                   booksByGenre = await _context.Books.Where(s => s.Shelf_ID == shelf.Shelf_ID && s.Genre==genre).ToListAsync();
+
+                booksByGenre=booksByGenre.OrderBy(s => s).ToList();
+            }
+            return booksByGenre;
+        }
+        [HttpGet] 
+        public  IActionResult ADDShelf(int id) 
+        {
+
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ADDShelf(Shelf shelf) 
+        {
+            if (ModelState.IsValid)
+            {
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                Reader reader = await _context.Readers.Where(s => s.IdentityUserId == userId).FirstOrDefaultAsync();
+                shelf.ReaderId = reader.ReaderId;
+                _context.Add(shelf);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(shelf);
+
+        }
+        [HttpGet]
+        public async Task<IActionResult> EditShelf(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Shelf shelf = await _context.Shelves.Where(s=>s.Shelf_ID==id).FirstOrDefaultAsync();
+            if (shelf == null)
+            {
+                return NotFound();
+            }
+            return View(shelf);
+        }
+         [HttpPost]
+        public async Task<IActionResult>EditShelf(Shelf shelf) 
+        {
+            Shelf changedshelf =await _context.Shelves.Where(s => s.Shelf_ID == shelf.Shelf_ID).FirstOrDefaultAsync();
+            changedshelf = shelf;
+            _context.Update(changedshelf);
+            _context.SaveChanges();
+            return View(changedshelf);
+
+        }
+        [HttpGet]
+        public async Task<IActionResult> DeleteShelf(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Shelf shelf = await _context.Shelves.FirstOrDefaultAsync(s => s.Shelf_ID == id);
+            if (shelf == null)
+            {
+                return NotFound();
+            }
+
+            return View(shelf);
+        }
+        [HttpPost, ActionName("DeleteShelf")]
+        public async Task<IActionResult> DeleteShelf(Shelf shelf) 
+        {
+            Shelf goneShelf = await _context.Shelves.Where(s => s.Shelf_ID == shelf.Shelf_ID).FirstOrDefaultAsync();
+            _context.Remove(goneShelf);
+            _context.SaveChanges();
+            return RedirectToAction(nameof(Index)); 
+        }
+        public async void GetShelves(int id) 
+        {
+            ViewBag.Myshelves =await _context.Shelves.Where(s => s.ReaderId == id).ToListAsync();
+        
+        }
+        public async void GetShelfByName(string name)
+        {
+            ViewBag.NamedShelf = await  _context.Shelves.Where(s => s.Shelf_Name == name.ToLower()).FirstOrDefaultAsync();
+        
+        
+        
+        }
+
 
     }
 }
-
+ 
 
 

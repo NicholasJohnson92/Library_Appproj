@@ -1,0 +1,79 @@
+﻿@model Library_App.Models.Books
+
+@{
+    ViewData["Title"] = "editBook";
+}
+
+<h1>editBook</h1>
+
+<h4>Books</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="editBook">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="BookId" />
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AuthorFirstName" class="control-label"></label>
+                <input asp-for="AuthorFirstName" class="form-control" />
+                <span asp-validation-for="AuthorFirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AuthorLastName" class="control-label"></label>
+                <input asp-for="AuthorLastName" class="form-control" />
+                <span asp-validation-for="AuthorLastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IBSN" class="control-label"></label>
+                <input asp-for="IBSN" class="form-control" />
+                <span asp-validation-for="IBSN" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Genre" class="control-label"></label>
+                <input asp-for="Genre" class="form-control" />
+                <span asp-validation-for="Genre" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Lendable" /> @Html.DisplayNameFor(model => model.Lendable)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Completed" /> @Html.DisplayNameFor(model => model.Completed)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Shelf_ID" class="control-label"></label>
+                <input asp-for="Shelf_ID" class="form-control" />
+                <span asp-validation-for="Shelf_ID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AuthorID" class="control-label"></label>
+                <select asp-for="AuthorID" class="form-control" asp-items="ViewBag.AuthorID"></select>
+                <span asp-validation-for="AuthorID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReaderId" class="control-label"></label>
+                <select asp-for="ReaderId" class="form-control" asp-items="ViewBag.ReaderId"></select>
+                <span asp-validation-for="ReaderId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
