@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,8 +13,10 @@ namespace Library_App.Models
         public int AuthorID { get; set; }
         public string AuthorFirstName { get; set; }
         public string AuthorLastName { get; set; }
-        public int Rating { get; set; }
-
+        public double Rating { get; set; }
+        [ForeignKey("Reader")]
+        public int ReaderId { get; set; }
+        public Reader Reader { get; set; }
 
 
     }

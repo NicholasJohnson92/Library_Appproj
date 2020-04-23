@@ -15,11 +15,13 @@ using Microsoft.Extensions.Hosting;
 using Library_App.Global_Routing;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using Library_App.Services;
 
 namespace Library_App
 {
     public class Startup
     {
+        GoodReadsReq goodReads = new GoodReadsReq();
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -40,6 +42,7 @@ namespace Library_App
             services.AddControllersWithViews();
             services.AddRazorPages();
                   services.AddScoped<ClaimsPrincipal>(s => s.GetService<IHttpContextAccessor>().HttpContext.User); services.AddControllers(config => { config.Filters.Add(typeof(GlobalRouting)); });
+            services.AddScoped<GoodReadsReq>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

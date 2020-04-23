@@ -6,16 +6,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Library_App.Models;
+using Library_App.Services;
 
 namespace Library_App.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly GoodReadsReq _goodReadsReq;
+        public HomeController(ILogger<HomeController> logger,GoodReadsReq goodReadsReq)
         {
             _logger = logger;
+            _goodReadsReq = goodReadsReq;
         }
 
         public IActionResult Index()

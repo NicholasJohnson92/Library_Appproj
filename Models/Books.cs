@@ -16,7 +16,10 @@ namespace Library_App.Models
         public string IBSN { get; set; }
         public string Genre { get; set; }
         public bool Lendable { get; set; }
+        public bool OnLease{ get; set; }
+        public int BorrowerID{ get; set; }
         public bool Completed { get; set; }
+        public double Rating { get; set; }
         [ForeignKey("Shelf")]
         public int Shelf_ID { get; set; }
         public Library Library { get; set; }

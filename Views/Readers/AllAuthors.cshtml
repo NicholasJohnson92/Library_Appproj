@@ -1,0 +1,54 @@
+﻿@model IEnumerable<Library_App.Models.Author>
+
+@{
+    ViewData["Title"] = "AllAuthors";
+}
+
+<h1>Your Authors</h1>
+
+<p>
+    <a asp-action="">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.AuthorFirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AuthorLastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rating)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Reader)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.AuthorFirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AuthorLastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rating)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Reader.ReaderId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.AuthorID">Edit</a> |
+                <a asp-action="ApplyRating" asp-route-id="@item,@item.AuthorID">Rate this Author</a> |
+                <a asp-action="Details" asp-route-id="@item.AuthorID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.AuthorID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

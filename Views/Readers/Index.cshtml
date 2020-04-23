@@ -9,6 +9,8 @@
 <p>
     <a asp-action="ADDShelf">Add a shelf</a>
     <a asp-action="AddBook" asp-route-id="@Model.ReaderId">Add a book!</a>
+    <a asp-action="GetAllBooks" asp-route-id="@Model.ReaderId">View your library</a>
+    <a asp-action="AddBook" asp-route-id="@Model.ReaderId">Add a book!</a>
 </p>
 <table class="table">
     <thead>

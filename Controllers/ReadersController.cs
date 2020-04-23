@@ -9,6 +9,7 @@ using Library_App.Data;
 using Library_App.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Library_App.Services;
 
 namespace Library_App.Controllers
 {
@@ -16,20 +17,22 @@ namespace Library_App.Controllers
     public class ReadersController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly GoodReadsReq _goodReadsReq;
 
-        public ReadersController(ApplicationDbContext context)
+        public ReadersController(ApplicationDbContext context, GoodReadsReq goodReadsReq)
         {
             _context = context;
+            _goodReadsReq = goodReadsReq;
         }
 
         // GET: Readers
         public async Task<IActionResult> Index()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            Reader reader =await _context.Readers.Where(s => s.IdentityUserId == userId).FirstOrDefaultAsync();
+            Reader reader = await _context.Readers.Where(s => s.IdentityUserId == userId).FirstOrDefaultAsync();
             GetShelves(reader.ReaderId);
             return View(reader);
-            
+
         }
 
         // GET: Readers/Details/5
@@ -40,8 +43,8 @@ namespace Library_App.Controllers
                 return NotFound();
             }
 
-            var books =await _context.Books.Where(s => s.Shelf_ID == id).ToListAsync();
-            if (books== null)
+            var books = await _context.Books.Where(s => s.Shelf_ID == id).ToListAsync();
+            if (books == null)
             {
                 return NotFound();
             }
@@ -158,18 +161,18 @@ namespace Library_App.Controllers
             return _context.Readers.Any(e => e.ReaderId == id);
         }
         [HttpGet]
-        public IActionResult AddBook(int id) 
+        public IActionResult AddBook(int id)
         {
             return View();
-        
-        
-        
+
+
+
         }
         [HttpPost]
         public async Task<IActionResult> AddBook(Books books)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            Reader reader =await _context.Readers.Where(s => s.IdentityUserId == userId).FirstOrDefaultAsync();
+            Reader reader = await _context.Readers.Where(s => s.IdentityUserId == userId).FirstOrDefaultAsync();
             var author = await findAuthor(books.AuthorFirstName, books.AuthorLastName);
             books.Genre = books.Genre.ToLower();
             books.AuthorID = getAuthorID(author);
@@ -180,7 +183,7 @@ namespace Library_App.Controllers
         }
         public async Task<Author> findAuthor(string firstName, string lastName)
         {
-            var author =await _context.Authors.Where(s => s.AuthorFirstName == firstName && s.AuthorLastName == lastName).FirstOrDefaultAsync();
+            var author = await _context.Authors.Where(s => s.AuthorFirstName == firstName && s.AuthorLastName == lastName).FirstOrDefaultAsync();
             if (author == null)
             {
                 Author author1 = new Author();
@@ -222,33 +225,35 @@ namespace Library_App.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> editBook(Books books) 
+        public async Task<IActionResult> editBook(Books books)
         {
             var author = await findAuthor(books.AuthorFirstName, books.AuthorLastName);
             Books books1 = await _context.Books.Where(s => s.BookId == books.BookId).FirstOrDefaultAsync();
+            
             books.AuthorID = getAuthorID(author);
             books1 = books;
+            books1.Genre = books.Genre.ToLower();
             _context.Update(books1);
             _context.SaveChanges();
             return View(books1);
         }
 
-        [HttpPost,ActionName("DeleteBook")]
-        public async Task<IActionResult> DeleteBook(Books books) 
+        [HttpPost, ActionName("DeleteBook")]
+        public async Task<IActionResult> DeleteBook(Books books)
         {
             var deletedbook = await _context.Books.Where(s => s.BookId == books.BookId).FirstOrDefaultAsync();
             _context.Remove(deletedbook);
             _context.SaveChanges();
             return View(books);
-        
-        
-        
-        
-        
+
+
+
+
+
         }
-        public async Task<List<Books>> GetAllBooks(Reader reader) 
+        public async Task<List<Books>> GetAllBooks(Reader reader)
         {
-            
+
             List<Books> allBooks = new List<Books>();
             allBooks = await _context.Books.Where(s => s.ReaderId == reader.ReaderId).ToListAsync();
             return allBooks;
@@ -261,22 +266,22 @@ namespace Library_App.Controllers
             Reader reader = await _context.Readers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
             var myShelves = await _context.Shelves.Where(s => s.ReaderId == reader.ReaderId).ToListAsync();
             List<Books> booksByGenre = new List<Books>();
-            foreach(var shelf in myShelves) 
+            foreach (var shelf in myShelves)
             {
-                   booksByGenre = await _context.Books.Where(s => s.Shelf_ID == shelf.Shelf_ID && s.Genre==genre).ToListAsync();
+                booksByGenre = await _context.Books.Where(s => s.Shelf_ID == shelf.Shelf_ID && s.Genre == genre).ToListAsync();
 
-                booksByGenre=booksByGenre.OrderBy(s => s).ToList();
+                booksByGenre = booksByGenre.OrderBy(s => s).ToList();
             }
             return booksByGenre;
         }
-        [HttpGet] 
-        public  IActionResult ADDShelf(int id) 
+        [HttpGet]
+        public IActionResult ADDShelf(int id)
         {
 
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> ADDShelf(Shelf shelf) 
+        public async Task<IActionResult> ADDShelf(Shelf shelf)
         {
             if (ModelState.IsValid)
             {
@@ -298,17 +303,17 @@ namespace Library_App.Controllers
                 return NotFound();
             }
 
-            Shelf shelf = await _context.Shelves.Where(s=>s.Shelf_ID==id).FirstOrDefaultAsync();
+            Shelf shelf = await _context.Shelves.Where(s => s.Shelf_ID == id).FirstOrDefaultAsync();
             if (shelf == null)
             {
                 return NotFound();
             }
             return View(shelf);
         }
-         [HttpPost]
-        public async Task<IActionResult>EditShelf(Shelf shelf) 
+        [HttpPost]
+        public async Task<IActionResult> EditShelf(Shelf shelf)
         {
-            Shelf changedshelf =await _context.Shelves.Where(s => s.Shelf_ID == shelf.Shelf_ID).FirstOrDefaultAsync();
+            Shelf changedshelf = await _context.Shelves.Where(s => s.Shelf_ID == shelf.Shelf_ID).FirstOrDefaultAsync();
             changedshelf = shelf;
             _context.Update(changedshelf);
             _context.SaveChanges();
@@ -332,28 +337,99 @@ namespace Library_App.Controllers
             return View(shelf);
         }
         [HttpPost, ActionName("DeleteShelf")]
-        public async Task<IActionResult> DeleteShelf(Shelf shelf) 
+        public async Task<IActionResult> DeleteShelf(Shelf shelf)
         {
             Shelf goneShelf = await _context.Shelves.Where(s => s.Shelf_ID == shelf.Shelf_ID).FirstOrDefaultAsync();
             _context.Remove(goneShelf);
             _context.SaveChanges();
-            return RedirectToAction(nameof(Index)); 
+            return RedirectToAction(nameof(Index));
         }
-        public async void GetShelves(int id) 
+        public async void GetShelves(int id)
         {
-            ViewBag.Myshelves =await _context.Shelves.Where(s => s.ReaderId == id).ToListAsync();
-        
+            ViewBag.Myshelves = await _context.Shelves.Where(s => s.ReaderId == id).ToListAsync();
+
         }
-        public async void GetShelfByName(string name)
+        public Shelf GetShelfByName(string name)
         {
-            ViewBag.NamedShelf = await  _context.Shelves.Where(s => s.Shelf_Name == name.ToLower()).FirstOrDefaultAsync();
-        
-        
-        
+            Shelf shelf = _context.Shelves.Where(s => s.Shelf_Name == name.ToLower()).FirstOrDefault();
+            ViewBag.NamedShelf = shelf;
+            return shelf;
+
+
         }
 
 
-    }
+
+        public async void ApplyRating(Books books, double rating)
+        {
+            Books books1 = await _context.Books.FindAsync(books.BookId);
+            books1.Rating = rating;
+            _context.Update(books1);
+            _context.SaveChanges();
+                }
+    
+
+    
+        public async void ApplyRating(Author author, double rating)
+        {
+           Author author1 = await _context.Authors.FindAsync(author.AuthorID);
+            author1.Rating = rating;
+            _context.Update(author1);
+            _context.SaveChanges();
+
+
+        }
+        public async void PutBookOnShelf(int id,string name) 
+        {
+            Shelf shelf = GetShelfByName(name);
+            Books books = await _context.Books.Where(s => s.BookId == id).FirstOrDefaultAsync();
+            books.Shelf_ID = shelf.Shelf_ID;
+            _context.Update(books);
+            _context.SaveChanges();
+        
+        }
+        public async Task<IActionResult> AllAuthors(int id) 
+        {
+            List<Author> allAuthors = new List<Author>();
+            allAuthors =await _context.Authors.Where(s => s.ReaderId == id).ToListAsync();
+
+            return View(allAuthors);
+        
+        
+        
+        }
+        public async Task<IActionResult> HighlyRatedAuthors(int id)
+        {
+            List<Author> highlyRated = await _context.Authors.Where(s => s.ReaderId == id && s.Rating >= 4.0).ToListAsync();
+            return View(highlyRated);
+        }
+        public async Task<IActionResult> HighlyRatedBooks(int id)
+        {
+            List<Books> highlyRated = await _context.Books.Where(s => s.ReaderId == id && s.Rating >= 4.0).ToListAsync();
+            return View(highlyRated);
+
+        }
+        public async void BookRead(int id) 
+        {
+            Books books =await _context.Books.Where(s => s.BookId == id).FirstOrDefaultAsync();
+            books.Completed = true;
+            _context.Update(books);
+            _context.SaveChanges();
+        
+        
+        
+        }
+        public async void ChangeLendability(int id,bool input) 
+        {
+            Books books =await _context.Books.Where(s => s.BookId == id).FirstOrDefaultAsync();
+            books.Lendable = input;
+            _context.Update(books);
+            _context.SaveChanges();
+        
+        
+        
+        }
+    } 
 }
  
 

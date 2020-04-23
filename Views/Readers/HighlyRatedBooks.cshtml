@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<Library_App.Models.Books>
 
 @{
-    ViewData["Title"] = "GetAllBooks";
+    ViewData["Title"] = "HighlyRatedBooks";
 }
 
-<h1>GetAllBooks</h1>
+<h1>HighlyRatedBooks</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -31,7 +31,16 @@
                 @Html.DisplayNameFor(model => model.Lendable)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.OnLease)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BorrowerID)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Completed)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rating)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Shelf_ID)
@@ -67,7 +76,16 @@
                 @Html.DisplayFor(modelItem => item.Lendable)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.OnLease)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BorrowerID)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Completed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rating)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Shelf_ID)
@@ -80,11 +98,8 @@
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.BookId">Edit</a> |
-                <a asp-action="ApplyRating" asp-route-id="@item,@item.BookId">Rate this Book!</a> |
-                <a asp-action="DeleteBook" asp-route-id="@item.BookId">Delete</a>|
-                <a asp-action="BookRead" asp-route-id="@item.BookId">Finishned book? click here!!</a>
-                <a asp-action="ChangeLendability" asp-route-id="@item.BookId,true">Do you want to lend this book out? click here!!</a>|
-                <a asp-action="ChangeLendability" asp-route-id="@item.BookId,false">Do you want to NOT lend this book out? click here!!</a>
+                <a asp-action="Details" asp-route-id="@item.BookId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.BookId">Delete</a>
             </td>
         </tr>
 }
