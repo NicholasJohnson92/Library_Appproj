@@ -21,7 +21,7 @@ namespace Library_App
 {
     public class Startup
     {
-        GoodReadsReq goodReads = new GoodReadsReq();
+       
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;

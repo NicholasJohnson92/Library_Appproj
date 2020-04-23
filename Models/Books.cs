@@ -13,7 +13,8 @@ namespace Library_App.Models
         public string Title { get; set; }
         public string AuthorFirstName { get; set; }
         public string AuthorLastName { get; set; }
-        public string IBSN { get; set; }
+        [Required]
+        public long IBSN { get; set; }
         public string Genre { get; set; }
         public bool Lendable { get; set; }
         public bool OnLease{ get; set; }

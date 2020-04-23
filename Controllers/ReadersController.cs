@@ -179,7 +179,7 @@ namespace Library_App.Controllers
             books.ReaderId = reader.ReaderId;
             _context.Add(books);
             _context.SaveChanges();
-            return View(books);
+            return RedirectToAction(nameof(Index));
         }
         public async Task<Author> findAuthor(string firstName, string lastName)
         {
@@ -244,7 +244,7 @@ namespace Library_App.Controllers
             var deletedbook = await _context.Books.Where(s => s.BookId == books.BookId).FirstOrDefaultAsync();
             _context.Remove(deletedbook);
             _context.SaveChanges();
-            return View(books);
+            return RedirectToAction(nameof(Index));
 
 
 
@@ -292,7 +292,7 @@ namespace Library_App.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(shelf);
+            return RedirectToAction(nameof(Index));
 
         }
         [HttpGet]
@@ -317,7 +317,7 @@ namespace Library_App.Controllers
             changedshelf = shelf;
             _context.Update(changedshelf);
             _context.SaveChanges();
-            return View(changedshelf);
+            return RedirectToAction(nameof(Index));
 
         }
         [HttpGet]
@@ -388,19 +388,35 @@ namespace Library_App.Controllers
             _context.SaveChanges();
         
         }
-        public async Task<IActionResult> AllAuthors(int id) 
+        public async Task<List<Author>> AllAuthors(int id) 
         {
             List<Author> allAuthors = new List<Author>();
-            allAuthors =await _context.Authors.Where(s => s.ReaderId == id).ToListAsync();
+            var myBooks=await _context.Books.Where(s => s.ReaderId == id).ToListAsync();
+            foreach(var book in myBooks) 
+            {
+                Author author = await _context.Authors.Where(s => s.AuthorID == book.AuthorID).FirstAsync();
 
-            return View(allAuthors);
+
+                allAuthors.Add(author);
+
+            }
+
+            
+            return allAuthors;
         
         
         
         }
         public async Task<IActionResult> HighlyRatedAuthors(int id)
         {
-            List<Author> highlyRated = await _context.Authors.Where(s => s.ReaderId == id && s.Rating >= 4.0).ToListAsync();
+            var allMYAuthors =await AllAuthors(id);
+            List<Author> highlyRated = new List<Author>();
+                foreach (var author in allMYAuthors) 
+            {
+                Author highlyrated = _context.Authors.Where(s => s.AuthorID == author.AuthorID && s.Rating >= 4).FirstOrDefault();
+                highlyRated.Add(highlyrated);
+            
+            }
             return View(highlyRated);
         }
         public async Task<IActionResult> HighlyRatedBooks(int id)
@@ -429,6 +445,16 @@ namespace Library_App.Controllers
         
         
         }
+        [HttpGet]
+        public async Task<IActionResult> BorrowABook(int id) 
+        {
+            List<Books> books =await _context.Books.Where(s => s.Lendable == true && s.OnLease == false && s.ReaderId != id).ToListAsync();
+            return View(books);
+        
+        
+        }
+
+
     } 
 }
  

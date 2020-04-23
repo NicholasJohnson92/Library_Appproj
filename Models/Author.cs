@@ -14,10 +14,7 @@ namespace Library_App.Models
         public string AuthorFirstName { get; set; }
         public string AuthorLastName { get; set; }
         public double Rating { get; set; }
-        [ForeignKey("Reader")]
-        public int ReaderId { get; set; }
-        public Reader Reader { get; set; }
-
+       
 
     }
 }
