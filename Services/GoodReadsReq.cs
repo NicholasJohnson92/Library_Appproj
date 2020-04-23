@@ -57,11 +57,11 @@ namespace Library_App.Services
                 var myObj = JsonConvert.DeserializeObject<JObject>(json);
                 //Console.WriteLine(myObj["GoodreadsResponse"]["author"]["books"].ToString());
                 var xz = myObj["GoodreadsResponse"]["author"]["books"]["book"];
-                foreach (JToken thing in xz)
+                foreach (JToken book in xz)
                 {
                     //var otherthing = thing.SelectToken("title");
                     //Console.WriteLine(otherthing);
-                    string booktitles = thing["title"].ToString();
+                    string booktitles = book["title"].ToString();
                     mylist.Add(booktitles);
                 }
 
@@ -70,6 +70,22 @@ namespace Library_App.Services
             }
             return mylist;
 
+
+        }
+        public async Task<List<string>> BooksOnSimilarSubject(string subject)
+        {
+            List<string> mylist = new List<string>();
+            subject = subject.Trim().ToLower();
+            HttpClient client = new HttpClient();
+            HttpResponseMessage httpResponse = await client.GetAsync($"https://www.googleapis.com/books/v1/volumes?q={subject}+subject:&key={ApiKey.GoodReadsKey}");
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                var json = await httpResponse.Content.ReadAsStringAsync();
+                var myobj = JsonConvert.DeserializeObject<JObject>(json);
+                Console.WriteLine(myobj.ToString());
+
+            }
+            return mylist;
 
         }
 
