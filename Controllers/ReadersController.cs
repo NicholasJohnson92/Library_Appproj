@@ -239,9 +239,9 @@ namespace Library_App.Controllers
         }
 
         [HttpPost, ActionName("DeleteBook")]
-        public async Task<IActionResult> DeleteBook(Books books)
+        public async Task<IActionResult> DeleteBook(int id)
         {
-            var deletedbook = await _context.Books.Where(s => s.BookId == books.BookId).FirstOrDefaultAsync();
+            var deletedbook = await _context.Books.Where(s => s.BookId ==id).FirstOrDefaultAsync();
             _context.Remove(deletedbook);
             _context.SaveChanges();
             return RedirectToAction(nameof(Index));
@@ -251,12 +251,12 @@ namespace Library_App.Controllers
 
 
         }
-        public async Task<List<Books>> GetAllBooks(Reader reader)
+        public async Task<IActionResult> GetAllBooks(int id)
         {
 
             List<Books> allBooks = new List<Books>();
-            allBooks = await _context.Books.Where(s => s.ReaderId == reader.ReaderId).ToListAsync();
-            return allBooks;
+            allBooks = await _context.Books.Where(s => s.ReaderId ==id).ToListAsync();
+            return View(allBooks);
         }
 
 
@@ -360,17 +360,32 @@ namespace Library_App.Controllers
 
 
 
-        public async void ApplyRating(Books books, double rating)
+        public async void RateThisBook(int id, double rating)
         {
-            Books books1 = await _context.Books.FindAsync(books.BookId);
+            Books books1 = await _context.Books.FindAsync(id);
             books1.Rating = rating;
             _context.Update(books1);
             _context.SaveChanges();
                 }
-    
 
-    
-        public async void ApplyRating(Author author, double rating)
+
+        public async Task<IActionResult> RathThisAuthor(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var author= await _context.Authors.FindAsync(id);
+            if (author == null)
+            {
+                return NotFound();
+            }
+            return View(author);
+
+
+        }
+        public async void RateThisAuthor(Author author, double rating)
         {
            Author author1 = await _context.Authors.FindAsync(author.AuthorID);
             author1.Rating = rating;
@@ -388,7 +403,7 @@ namespace Library_App.Controllers
             _context.SaveChanges();
         
         }
-        public async Task<List<Author>> AllAuthors(int id) 
+        public async Task<IActionResult> AllAuthors(int id) 
         {
             List<Author> allAuthors = new List<Author>();
             var myBooks=await _context.Books.Where(s => s.ReaderId == id).ToListAsync();
@@ -402,14 +417,23 @@ namespace Library_App.Controllers
             }
 
             
-            return allAuthors;
+            return View(allAuthors);
         
         
         
         }
         public async Task<IActionResult> HighlyRatedAuthors(int id)
         {
-            var allMYAuthors =await AllAuthors(id);
+            List<Author> allMYAuthors = new List<Author>();
+            var myBooks = await _context.Books.Where(s => s.ReaderId == id).ToListAsync();
+            foreach (var book in myBooks)
+            {
+                Author author = await _context.Authors.Where(s => s.AuthorID == book.AuthorID).FirstAsync();
+
+
+                allMYAuthors.Add(author);
+
+            }
             List<Author> highlyRated = new List<Author>();
                 foreach (var author in allMYAuthors) 
             {
@@ -453,7 +477,39 @@ namespace Library_App.Controllers
         
         
         }
+        public async Task<IActionResult> Similarbooks(int id)
+        {
+            Books book = _context.Books.Where(s => s.BookId == id).FirstOrDefault();
+            List<string> mylist =await  _goodReadsReq.BooksOnSimilarSubject(book.Genre.ToString());
+            return View(mylist);
+        
+        
+        }
 
+        public async Task<IActionResult> AuthorCatalog(int id) 
+        {
+            Author author = _context.Authors.Where(s => s.AuthorID == id).FirstOrDefault();
+            List<string> mylist =await _goodReadsReq.ShowAuthorsBooks(author.AuthorFirstName, author.AuthorLastName);
+
+            return View(mylist);
+        
+        
+        }
+        public async Task<IActionResult> SeriesSearch(int id)
+        {
+            List<string> mystring = new List<string>();
+            try
+            {
+                
+                   Books books = _context.Books.Where(s => s.BookId == id).FirstOrDefault();
+                List<string> mylist = await _goodReadsReq.GetSeries(books);
+                return View(mylist);
+            }
+            catch(Exception) { mystring.Add("No series found"); return View(mystring);  }
+        
+        
+        
+        }
 
     } 
 }

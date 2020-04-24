@@ -79,12 +79,15 @@
                 @Html.DisplayFor(modelItem => item.Reader.ReaderId)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.BookId">Edit</a> |
-                <a asp-action="ApplyRating" asp-route-id="@item,@item.BookId">Rate this Book!</a> |
-                <a asp-action="DeleteBook" asp-route-id="@item.BookId">Delete</a>|
-                <a asp-action="BookRead" asp-route-id="@item.BookId">Finishned book? click here!!</a>
-                <a asp-action="ChangeLendability" asp-route-id="@item.BookId,true">Do you want to lend this book out? click here!!</a>|
-                <a asp-action="ChangeLendability" asp-route-id="@item.BookId,false">Do you want to NOT lend this book out? click here!!</a>
+                <a asp-action="Edit" asp-route-id="@item.BookId">Edit</a> | <a asp-action="ApplyRating" asp-route-id="@item,@item.BookId">Rate this Book!</a> |
+
+                <a asp-action="DeleteBook" asp-route-id="@item.BookId">Delete</a>|<a asp-action="BookRead" asp-route-id="@item.BookId">Finishned book? click here!!</a>|
+
+                <a asp-action="ChangeLendability" asp-route-id="@item.BookId,true">Do you want to lend this book out? click here!!</a>| <a asp-action="ChangeLendability" asp-route-id="@item.BookId,false">Do you want to NOT lend this book out? click here!!</a>|
+
+                <a asp-action="Similarbooks" asp-route-id="@item.BookId">Books with the same subject</a>|<a asp-action="SeriesSearch" asp-route-id="@item.BookId">Find other books in this series</a>
+                                                                                                        
+                
             </td>
         </tr>
 }

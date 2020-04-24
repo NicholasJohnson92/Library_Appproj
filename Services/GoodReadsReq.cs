@@ -77,12 +77,18 @@ namespace Library_App.Services
             List<string> mylist = new List<string>();
             subject = subject.Trim().ToLower();
             HttpClient client = new HttpClient();
-            HttpResponseMessage httpResponse = await client.GetAsync($"https://www.googleapis.com/books/v1/volumes?q={subject}+subject:&key={ApiKey.GoodReadsKey}");
+            HttpResponseMessage httpResponse = await client.GetAsync($"https://www.googleapis.com/books/v1/volumes?q={subject}+subject:&key={ApiKey.GoogleKey}");
             if (httpResponse.IsSuccessStatusCode)
             {
                 var json = await httpResponse.Content.ReadAsStringAsync();
                 var myobj = JsonConvert.DeserializeObject<JObject>(json);
-                Console.WriteLine(myobj.ToString());
+                var xz = myobj["items"];
+                foreach (JToken thing in xz)
+                {
+                    var otherthing = thing["volumeInfo"]["title"];
+
+                    mylist.Add(otherthing.ToString());
+                }
 
             }
             return mylist;
@@ -139,7 +145,10 @@ namespace Library_App.Services
                 doc.LoadXml(xml);
                 string json = JsonConvert.SerializeXmlNode(doc);
                 var myObj = JsonConvert.DeserializeObject<JObject>(json);
-                Console.WriteLine();
+                var xz = myObj["GoodreadsResponse"]["series_works"]["series_work"]["series"]["id"];
+                int seriesID = int.Parse(xz.ToString());
+                Console.WriteLine(seriesID);
+                return seriesID;
 
             }
 
@@ -182,6 +191,7 @@ namespace Library_App.Services
 
 
         }
+        
 
 
 

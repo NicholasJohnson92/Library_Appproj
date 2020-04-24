@@ -1,0 +1,40 @@
+﻿@model IEnumerable<string>
+
+@{
+    ViewData["Title"] = "SeriesSearch";
+}
+
+<h1>SeriesSearch</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+               Title
+            </th>
+            <th>
+               
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @item
+            </td>
+            <td>
+                
+            </td>
+            <td>
+               
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<a asp-action="Index">Back to List</a>
