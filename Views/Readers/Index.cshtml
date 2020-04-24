@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Homepage</h1>
 
 <head>
     
@@ -17,53 +17,55 @@
 <body>
     <section id="banner">
         <h2><strong>Library App</strong> is a free site</h2>
-        <p>Nicky pooh</p>
-        <ul class="actions">
+        <p></p>
+        @*<ul class="actions">
             <li><a href="#" class="button special"></a></li>
-        </ul>
-    </section>
-    <p>
-        <a asp-action="ADDShelf">Add a shelf</a>
-        <a asp-action="AddBook" asp-route-id="@Model.ReaderId">Add a book!</a>
-        <a asp-action="GetAllBooks" asp-route-id="@Model.ReaderId">View your library</a>
-        <a asp-action="AllAuthors"asp-route-id="@Model.ReaderId">View your Authors</a>
-    </p>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    Shelf Name
-                </th>
-                <th>
-
-                </th>
-                <th>
-
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in ViewBag.Myshelves)
-            {
+        </ul>*@
+        </section>
+        <section id="one" class="wrapper special">
+        <p>
+            <a asp-action="ADDShelf">Add a shelf</a>
+            <a asp-action="AddBook" asp-route-id="@Model.ReaderId">Add a book!</a>
+            <a asp-action="GetAllBooks" asp-route-id="@Model.ReaderId">View your library</a>
+            <a asp-action="AllAuthors" asp-route-id="@Model.ReaderId">View your Authors</a>
+        </p>
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>
-                        <div style="display:block;width:100%" asp-action="Details" asp-route-id="@item.Shelf_Name"></div>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Shelf_ID">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Shelf_ID">Details</a> |
+                    <th>
+                        Shelf Name
+                    </th>
+                    <th>
 
-                    </td>
+                    </th>
+                    <th>
+
+                    </th>
+                    <th></th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in ViewBag.Myshelves)
+                {
+                    <tr>
+                        <td>
+                            @item.Shelf_Name
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Shelf_ID">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.Shelf_ID">Details</a> |
+                            <a asp-action="DeleteShelf" asp-route-id="@item.Shelf_ID">Delete</a> |
 
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
 
 
     @*<body>*@

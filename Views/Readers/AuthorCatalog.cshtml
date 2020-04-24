@@ -16,25 +16,29 @@
                 Title
             </th>
             <th>
-               
+
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @item
-            </td>
-            <td>
-               
-            </td>
-            <td>
-                
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 <a asp-action="Index">Back to List</a>
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/skel.min.js"></script>
+<script src="assets/js/util.js"></script>
+<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+<script src="assets/js/main.js"></script>

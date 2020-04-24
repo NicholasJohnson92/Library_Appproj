@@ -225,17 +225,45 @@ namespace Library_App.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> editBook(Books books)
+        public async Task<IActionResult> editBook(int id, Books books)
         {
             var author = await findAuthor(books.AuthorFirstName, books.AuthorLastName);
-            Books books1 = await _context.Books.Where(s => s.BookId == books.BookId).FirstOrDefaultAsync();
-            
+
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Reader reader = await _context.Readers.Where(s => s.IdentityUserId == userId).FirstOrDefaultAsync();
             books.AuthorID = getAuthorID(author);
-            books1 = books;
-            books1.Genre = books.Genre.ToLower();
-            _context.Update(books1);
-            _context.SaveChanges();
-            return View(books1);
+            books.ReaderId = reader.ReaderId;
+            books.Genre = books.Genre.ToLower();
+            
+            {
+                if (id != books.BookId)
+                {
+                    return NotFound();
+                }
+
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        _context.Update(books);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!ReaderExists(books.BookId))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(books);
+            }
+            
         }
 
         [HttpPost, ActionName("DeleteBook")]
@@ -369,7 +397,7 @@ namespace Library_App.Controllers
                 }
 
 
-        public async Task<IActionResult> RathThisAuthor(int? id)
+        public async Task<IActionResult> RateThisAuthor(int? id)
         {
             if (id == null)
             {
@@ -385,12 +413,16 @@ namespace Library_App.Controllers
 
 
         }
-        public async void RateThisAuthor(Author author, double rating)
+        public async Task<IActionResult> RateThisAuthor(Author author)
         {
-           Author author1 = await _context.Authors.FindAsync(author.AuthorID);
-            author1.Rating = rating;
-            _context.Update(author1);
+            if (author.Rating > 5) { author.Rating = 5; }
+
+            else if (author.Rating < 0) { author.Rating = 0; }
+            
+            _context.Update(author);
             _context.SaveChanges();
+            return RedirectToAction(nameof(AllAuthors));
+
 
 
         }
@@ -459,9 +491,14 @@ namespace Library_App.Controllers
         
         
         }
-        public async void ChangeLendability(int id,bool input) 
+        public async void ChangeLendability(int id) 
         {
-            Books books =await _context.Books.Where(s => s.BookId == id).FirstOrDefaultAsync();
+            Books books = new Books();
+            bool input = true;
+             books =await _context.Books.Where(s => s.BookId == id).FirstOrDefaultAsync();
+            if (books.Lendable == false) { input = true; }
+             else if (books.Lendable == true) { input = false; }
+
             books.Lendable = input;
             _context.Update(books);
             _context.SaveChanges();

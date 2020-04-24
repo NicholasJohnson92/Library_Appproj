@@ -7,7 +7,7 @@
 <h1>GetAllBooks</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="HighlyRatedBooks">Your Fave Books </a>
 </p>
 <table class="table">
     <thead>
@@ -37,16 +37,16 @@
                 @Html.DisplayNameFor(model => model.Shelf_ID)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Author)
+                @Html.DisplayNameFor(model => model.Rating)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Reader)
+               
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (Books item in Model) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
@@ -73,17 +73,17 @@
                 @Html.DisplayFor(modelItem => item.Shelf_ID)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Author.AuthorID)
+                @Html.DisplayFor(modelItem => item.Rating)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Reader.ReaderId)
+                
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.BookId">Edit</a> | <a asp-action="ApplyRating" asp-route-id="@item,@item.BookId">Rate this Book!</a> |
+                <a asp-action="editBook" asp-route-id="@item.BookId">Edit</a> | <a asp-action="ApplyRating" asp-route-id="@item,@item.BookId">Rate this Book!</a> |
 
                 <a asp-action="DeleteBook" asp-route-id="@item.BookId">Delete</a>|<a asp-action="BookRead" asp-route-id="@item.BookId">Finishned book? click here!!</a>|
 
-                <a asp-action="ChangeLendability" asp-route-id="@item.BookId,true">Do you want to lend this book out? click here!!</a>| <a asp-action="ChangeLendability" asp-route-id="@item.BookId,false">Do you want to NOT lend this book out? click here!!</a>|
+                <a asp-action="ChangeLendability" asp-route-id=" @item.BookId">Do you want to Change lendable status? click here!!</a>|
 
                 <a asp-action="Similarbooks" asp-route-id="@item.BookId">Books with the same subject</a>|<a asp-action="SeriesSearch" asp-route-id="@item.BookId">Find other books in this series</a>
                                                                                                         

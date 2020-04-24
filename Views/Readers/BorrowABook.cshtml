@@ -7,7 +7,7 @@
 <h1>BorrowABook</h1>
 
 <p>
-    
+
 </p>
 <table class="table">
     <thead>
@@ -27,14 +27,14 @@
             <th>
                 @Html.DisplayNameFor(model => model.Genre)
             </th>
-          
-           
-           
+
+
+
             <th>
                 @Html.DisplayNameFor(model => model.Rating)
             </th>
-            
-           
+
+
             <th>
                 @Html.DisplayNameFor(model => model.Reader)
             </th>
@@ -42,41 +42,47 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AuthorFirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AuthorLastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IBSN)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Genre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Completed)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rating)
-            </td>
-           
-            
-            
-            <td>
-                @Html.DisplayFor(modelItem => item.Reader.ReaderId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.BookId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.BookId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.BookId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AuthorFirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AuthorLastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IBSN)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Genre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Completed)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rating)
+                </td>
+
+
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Reader.ReaderId)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.BookId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.BookId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.BookId">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/skel.min.js"></script>
+<script src="assets/js/util.js"></script>
+<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+<script src="assets/js/main.js"></script>
